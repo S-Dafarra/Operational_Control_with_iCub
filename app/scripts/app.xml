@@ -5,12 +5,44 @@
   <dependencies>
       <port>/icubSim/cam/left</port>
       <port>/icubSim/cam/right</port>
-      <port>/icubSim/cartesianController/right_arm/state:o</port>      
+      <port>/icubSim/cartesianController/right_arm/state:o</port>
       <port>/iKinGazeCtrl/rpc</port>
   </dependencies>
 
-  <!-->FILL IN THE APPLICATION<-->
-  
+  <module>
+      <name>main</name>
+      <node>localhost</node>
+      <workdir>/home/sdafarra/vvv-school/test-operational-control-with-icub-S-Dafarra/build</workdir>
+      <stdio>localhost</stdio>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <tag>Roll it!</tag>
+  </module>
+
+  <module>
+      <name>yarpview</name>
+      <dependencies>
+          <port timeout="20">/imgR:o</port>
+      </dependencies>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+      <tag>yarpView</tag>
+  </module>
+
+  <connection>
+     <from>/icubSim/cam/left</from>
+     <to>/imgL:i</to>
+     <protocol>tcp</protocol>
+  </connection>
+
+  <connection>
+     <from>/icubSim/cam/right</from>
+     <to>/imgR:i</to>
+     <protocol>tcp</protocol>
+  </connection>
+
+  <connection>
+     <from>/imgR:o</from>
+     <to>/yarpview/img:i</to>
+     <protocol>tcp</protocol>
+  </connection>
 </application>
-
-

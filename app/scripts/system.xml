@@ -1,11 +1,12 @@
 <application>
 
-  <name>System</name>
+  <name>Make_It_Roll_Startup</name>
 
   <module>
       <name>yarplogger</name>
       <parameters>--start</parameters>
       <node>localhost</node>
+      <tag>yarplogger</tag>
   </module>
 
   <module>
@@ -15,6 +16,7 @@
       </dependencies>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
+      <tag>iCub_SIM</tag>
   </module>
 
  <module>
@@ -26,6 +28,7 @@
       </dependencies>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
+      <tag>yarprobotinterface</tag>
   </module>
 
   <module>
@@ -36,6 +39,7 @@
       </dependencies>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
+      <tag>iKinCartesianSolver</tag>
   </module>
 
   <module>
@@ -47,6 +51,7 @@
       </dependencies>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
+      <tag>iKinGazeCtrl</tag>
   </module>
 
 </application>
