@@ -173,14 +173,28 @@ protected:
     }
 
     /***************************************************/
-    void look_down()
+    bool look_down()
     {
        Vector angles(3);
+       int context;
+       double traj_time;
+       bool output;
+	
        angles[0]=0.0;
        angles[1]=-40.0;
        angles[2]=0.0;
+       
+       igaze->storeContext(&context);
+       igaze->getNeckTrajTime(&traj_time);
+       igaze->bindNeckYaw(-0.1,0.1);
+       igaze->bindNeckRoll(-0.1,0.1);
        igaze->lookAtAbsAngles(angles);
-       igaze->waitMotionDone(); 
+       output = igaze->waitMotionDone(0.1,20*traj_time); 
+       igaze->restoreContext(context);
+       if (!output)
+	 igaze->stopControl();
+       return output;
+       
        
     }
 
@@ -358,8 +372,9 @@ public:
         }
         else if (cmd=="look_down")
         {
-            look_down();
+            if(look_down())
             reply.addString("Yep! I'm looking down now!");
+	    else reply.addString("Timeout!");
         }
         else if (cmd=="roll")
         {	
