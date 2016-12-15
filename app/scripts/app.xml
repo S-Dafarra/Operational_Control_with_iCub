@@ -12,7 +12,6 @@
   <module>
       <name>main</name>
       <node>localhost</node>
-      <workdir>/home/sdafarra/vvv-school/test-operational-control-with-icub-S-Dafarra/build</workdir>
       <stdio>localhost</stdio>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <tag>Roll it!</tag>
