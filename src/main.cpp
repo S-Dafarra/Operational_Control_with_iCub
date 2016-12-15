@@ -175,14 +175,14 @@ protected:
     /***************************************************/
     bool look_down()
     {
-       Vector angles(3);
-       int context;
-       double traj_time;
-       bool output;
-	
-       angles[0]=0.0;
-       angles[1]=-40.0;
-       angles[2]=0.0;
+        Vector angles(3);
+        int context;
+        double traj_time;
+        bool output;
+        
+        angles[0]=0.0;
+        angles[1]=-40.0;
+        angles[2]=0.0;
        
        igaze->storeContext(&context);
        igaze->getNeckTrajTime(&traj_time);
@@ -382,12 +382,19 @@ public:
 	    if(command.get(1).isDouble()||command.get(1).isInt()) {t=command.get(1).asDouble();}
 	    else t=0.5;
 	      
-            ImageOf<PixelRgb> *imgL=imgLPortIn.read();
-            ImageOf<PixelRgb> *imgR=imgRPortIn.read();
+            Vector LocalCogL, LocalCogR;
+	    bool LocalokL, LocalokR;
+	    
+	    mutex.lock();
+	    LocalokL = okL;
+            LocalokR = okR;
+            LocalCogL = cogL;
+            LocalCogR = cogR;
+	    mutex.unlock();
             
-            if (getCOG(*imgL, cogL)&&getCOG(*imgR, cogR))
+            if (LocalokL && LocalokR)
             {
-                if(roll(cogL,cogR,t))
+                if(roll(LocalCogL,LocalCogR,t))
                    reply.addString("Yeah! I've made it roll like a charm!");
 		else reply.addString("Timeout!");
             }
