@@ -1,12 +1,8 @@
-#include <string>
-#include <boost/concept_check.hpp>
-
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 #include <yarp/sig/all.h>
 #include <yarp/math/Math.h>
 
-#include <iCub/iKin/iKinFwd.h>
 
 #include <iCub/ctrl/math.h>
 
@@ -16,7 +12,7 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
 using namespace iCub::ctrl;
-using namespace iCub::iKin;
+
 /***************************************************/
 class CtrlModule: public RFModule
 {
@@ -86,8 +82,9 @@ protected:
 	igaze->getNeckTrajTime(&traj_time);
       
         igaze->bindNeckYaw(-20,20);
-	igaze->bindNeckRoll(-20,20);
-        igaze->lookAtFixationPoint(x);                 
+        igaze->bindNeckRoll(-20,20);
+        igaze->setTrackingMode(true); 
+        igaze->lookAtFixationPoint(x);
         return igaze->waitMotionDone(0.1,20*traj_time); 
     }
 
@@ -108,8 +105,8 @@ protected:
     {
        Vector offset(3);
        Vector new_x(3);
-       double time_now;
        double traj_time;
+       bool success;
        
        offset = 0;
        
@@ -120,17 +117,13 @@ protected:
 	
 	iarm->goToPose(new_x,o,1.0);
 	
-	bool done=false;
-	
+		
 	iarm->getTrajTime(&traj_time);
-	time_now=Time::now();
 	
 	
-	while ((!done)&&((Time::now()-time_now)<(traj_time*10))) {
-	iarm->checkMotionDone(&done);
-	}
-	
-	if((Time::now()-time_now)>=(traj_time*10))      
+	success = iarm->waitMotionDone(0.1,10*traj_time);
+		
+	if(!success)      
 	   return false;
 	
 	Time::delay(0.5);   // or any suitable delay
@@ -142,11 +135,11 @@ protected:
     {
        Vector offset(3);
        Vector new_x(3);
-       double time_now;
+       bool success;
        int context;
        offset = 0;
         
-        offset(0) = -0.03;      
+        offset(0) = -0.03;
         offset(1) = 0;
 	offset(2) = 0.01;
 	new_x=x+offset;
@@ -154,18 +147,13 @@ protected:
 	iarm->storeContext(&context);
 	iarm->goToPose(new_x,o,t);
 	
-	bool done=false;
-	
-	time_now=Time::now();
-	
-	while ((!done)&&((Time::now()-time_now)<(t*10))) {
-	iarm->checkMotionDone(&done);
-	}
-	
+	success=iarm->waitMotionDone(0.1,10*t);
+        
+	iarm->stopControl();
 	iarm->restoreContext(context);
 	iarm->deleteContext(context);
 	
-	if((Time::now()-time_now)>=(t*10))     
+	if(!success)
 	   return false;
 	
 	Time::delay(0.04);   // or any suitable delay
@@ -189,7 +177,8 @@ protected:
        igaze->bindNeckYaw(-0.1,0.1);
        igaze->bindNeckRoll(-0.1,0.1);
        igaze->lookAtAbsAngles(angles);
-       output = igaze->waitMotionDone(0.1,20*traj_time); 
+       output = igaze->waitMotionDone(0.1,20*traj_time);
+       igaze->stopControl();
        igaze->restoreContext(context);
        if (!output)
 	 igaze->stopControl();
@@ -270,6 +259,7 @@ protected:
        iarm->waitMotionDone();
        
        //Restore the previous context
+       iarm->stopControl();
        iarm->restoreContext(contextArm);
        iarm->deleteContext(contextArm);
        
@@ -324,6 +314,7 @@ public:
 	success = false;
 	while(!success){
 	success=iarm->getPose(home_pose,home_rot);
+        Time::yield();
 	}
 	yInfo("home orientation = (%s)",home_rot.toString(3,3).c_str());
 	yInfo("home position = (%s)",home_pose.toString(3,3).c_str());
