@@ -9,6 +9,6 @@ include_directories(${YARP_INCLUDE_DIRS}
                     ${ICUB_INCLUDE_DIRS})
 
 
-add_executable(main main.cpp)
+add_executable(make-it-roll main.cpp)
 
-target_link_libraries(main ${YARP_LIBRARIES} ctrlLib)
+target_link_libraries(make-it-roll ${YARP_LIBRARIES} ctrlLib)
