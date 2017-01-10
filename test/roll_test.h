@@ -14,6 +14,9 @@ class rollTest : public YarpTestCase
     std::string look_downCMD;
     std::string rollCMD;
     std::string homeCMD;
+    
+    yarp::os::BufferedPort<yarp::os::Bottle> head, arm, torso;
+    yarp::os::RpcClient ball;
 
 public:
     rollTest();

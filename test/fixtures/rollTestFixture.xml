@@ -1,0 +1,99 @@
+<application>
+
+  <name>Make_It_Roll_Startup</name>
+
+  <module>
+      <name>yarplogger</name>
+      <parameters>--start</parameters>
+      <node>localhost</node>
+      <tag>yarplogger</tag>
+  </module>
+
+  <module>
+      <name>iCub_SIM</name>
+      <dependencies>
+          <port timeout="10">/yarplogger</port>
+      </dependencies>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+      <tag>iCub_SIM</tag>
+  </module>
+
+ <module>
+      <name>yarprobotinterface</name>
+      <parameters>--context simCartesianControl --config no_legs.xml</parameters>
+      <dependencies>
+          <port timeout="20">/icubSim/left_arm/state:o</port>
+          <port timeout="20">/icubSim/right_arm/state:o</port>
+      </dependencies>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+      <tag>yarprobotinterface</tag>
+  </module>
+
+  <module>
+      <name>iKinCartesianSolver</name>
+      <parameters>--context simCartesianControl --part right_arm</parameters>
+      <dependencies>
+          <port timeout="20">/icubSim/right_arm/state:o</port>
+      </dependencies>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+      <tag>iKinCartesianSolver</tag>
+  </module>
+
+  <module>
+      <name>iKinGazeCtrl</name>
+      <parameters>--from configSim.ini --imu::mode off</parameters>
+      <dependencies>
+          <port timeout="20">/icubSim/head/state:o</port>
+          <port timeout="20">/icubSim/inertial</port>
+      </dependencies>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+      <tag>iKinGazeCtrl</tag>
+  </module>
+
+  <module>
+      <name>make-it-roll</name>
+      <workdir>../src</workdir>
+      <dependencies>
+        <port timeout="20">/icubSim/cam/left</port>
+        <port timeout="20">/icubSim/cam/right</port>
+        <port timeout="20">/icubSim/cartesianController/right_arm/state:o</port>
+        <port timeout="20">/iKinGazeCtrl/rpc</port>
+      </dependencies>
+      <node>localhost</node>
+      <stdio>localhost</stdio>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <tag>Roll it!</tag>
+  </module>
+
+  <module>
+      <name>yarpview</name>
+      <dependencies>
+          <port timeout="20">/imgR:o</port>
+      </dependencies>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+      <tag>yarpView</tag>
+  </module>
+
+  <connection>
+     <from>/icubSim/cam/left</from>
+     <to>/imgL:i</to>
+     <protocol>tcp</protocol>
+  </connection>
+
+  <connection>
+     <from>/icubSim/cam/right</from>
+     <to>/imgR:i</to>
+     <protocol>tcp</protocol>
+  </connection>
+
+  <connection>
+     <from>/imgR:o</from>
+     <to>/yarpview/img:i</to>
+     <protocol>tcp</protocol>
+  </connection>
+</application>

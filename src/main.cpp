@@ -371,7 +371,7 @@ public:
         {	
 	    double t;
 	    if(command.get(1).isDouble()||command.get(1).isInt()) {t=command.get(1).asDouble();}
-	    else t=0.5;
+	    else t=0.35;
 	      
             Vector LocalCogL, LocalCogR;
 	    bool LocalokL, LocalokR;

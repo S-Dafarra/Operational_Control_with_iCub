@@ -10,7 +10,8 @@
   </dependencies>
 
   <module>
-      <name>main</name>
+      <name>make-it-roll</name>
+      <workdir>src</workdir>
       <node>localhost</node>
       <stdio>localhost</stdio>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>

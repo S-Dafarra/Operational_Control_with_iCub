@@ -1,0 +1,8 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suit name="Make it Roll Tests Suite">
+    <description>Testing module's ability to roll a ball</description>
+    <environment>--robotname icubSim</environment>
+    <fixture param="--fixture rollTestFixture.xml"> yarpmanager </fixture>
+    <test type="dll"> libRollTest </test>
+</suit>

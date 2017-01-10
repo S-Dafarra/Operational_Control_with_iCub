@@ -20,7 +20,9 @@ add_library(${PROJECTNAME} MODULE roll_test.h
 target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES} ${YARP_LIBRARIES})
 
 # set the installation options
-#install(TARGETS ${PROJECTNAME}
-#        EXPORT ${PROJECTNAME}
-#        COMPONENT runtime
-#        LIBRARY DESTINATION lib)
+
+install(DIRECTORY suits/
+        DESTINATION ${CMAKE_BINARY_DIR}/test/suits)
+install(DIRECTORY fixtures/
+        DESTINATION ${CMAKE_BINARY_DIR}/test/fixtures)
+
