@@ -22,4 +22,8 @@ and the `Gaze Interface` to accomplish the following tasks:
 - To make the blue ball show up within the simulator, you have to turn on the
 flag **RENDER::objects** in the [**`iCub_parts_activation.ini`**](https://github.com/robotology/icub-main/blob/master/app/simConfig/conf/iCub_parts_activation.ini#L28) file.
 
+- To run the program launch ``yarpmanager`` from build directory then add ``app`` folder.
+
+- To run the test launch ``testrunner --verbose --suit suits/rollTestSuite.xml`` from ``build/test`` folder.
+
 # [How to complete the assignment](https://github.com/vvv-school/vvv-school.github.io/wiki/How-to-complete-assignments)
