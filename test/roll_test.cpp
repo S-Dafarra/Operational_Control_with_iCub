@@ -85,7 +85,7 @@ void rollTest::run()
     torso_init = torso.read();
     RTF_TEST_REPORT(Asserter::format("Retrieving torso initial position: %s",torso_init->toString().c_str()));
     arm_init = arm.read();
-    RTF_TEST_REPORT(Asserter::format("Retrieving torso initial position: %s",arm_init->toString().c_str()));
+    RTF_TEST_REPORT(Asserter::format("Retrieving arm initial position: %s",arm_init->toString().c_str()));
     
     cmd.clear();
     respond.clear();
@@ -166,7 +166,7 @@ void rollTest::run()
                 torso_count++;
                 completed = false;
             }
-            if(arm_count < arm_init->size()){
+            if(arm_count < min(arm_init->size(),7)){
                 passed = passed && (abs(arm.read()->get(arm_count).asDouble() - arm_init->get(arm_count).asDouble())<1);
                 arm_count++;
                 completed = false;

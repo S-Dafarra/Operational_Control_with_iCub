@@ -452,6 +452,7 @@ int main()
 
     CtrlModule mod;
     ResourceFinder rf;
+    Time::delay(2);
     return mod.runModule(rf);
 }
 
