@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.9)
 # set the project name
-set(PROJECTNAME RollTest)
+set(PROJECTNAME rollTest)
 project(${PROJECTNAME})
 # add the required cmake packages
 find_package(RTF)
@@ -21,8 +21,15 @@ target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES} ${YARP_LIBRARIES})
 
 # set the installation options
 
-install(DIRECTORY suits/
-        DESTINATION ${CMAKE_BINARY_DIR}/test/suits)
-install(DIRECTORY fixtures/
-        DESTINATION ${CMAKE_BINARY_DIR}/test/fixtures)
+install(DIRECTORY suits
+        DESTINATION ${CMAKE_BINARY_DIR}/test)
+install(DIRECTORY fixtures
+        DESTINATION ${CMAKE_BINARY_DIR}/test)
+
+find_program(TESTRUNNER_ABSOLUTE_PATH testrunner) 
+
+add_test(NAME RollTest
+         COMMAND ${TESTRUNNER_ABSOLUTE_PATH} --verbose --suit suits/rollTestSuite.xml)
+
+SET_TESTS_PROPERTIES(RollTest PROPERTIES ENVIRONMENT YARP_ROBOT_NAME=icubSim)
 

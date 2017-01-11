@@ -24,6 +24,6 @@ flag **RENDER::objects** in the [**`iCub_parts_activation.ini`**](https://github
 
 - To run the program launch ``yarpmanager`` from build directory then add ``app`` folder.
 
-- To run the test launch ``testrunner --verbose --suit suits/rollTestSuite.xml`` from ``build/test`` folder.
+- To run the test launch ``testrunner --verbose --suit suits/rollTestSuite.xml`` from ``build/test`` folder (or ctest -V from ``build`` folder).
 
 # [How to complete the assignment](https://github.com/vvv-school/vvv-school.github.io/wiki/How-to-complete-assignments)
