@@ -29,7 +29,8 @@ install(DIRECTORY fixtures
 find_program(TESTRUNNER_ABSOLUTE_PATH testrunner) 
 
 add_test(NAME RollTest
-         COMMAND ${TESTRUNNER_ABSOLUTE_PATH} --verbose --suit suits/rollTestSuite.xml)
+         COMMAND ${TESTRUNNER_ABSOLUTE_PATH} --verbose --suit suits/rollTestSuite.xml
+         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test)
 
 SET_TESTS_PROPERTIES(RollTest PROPERTIES ENVIRONMENT YARP_ROBOT_NAME=icubSim)
 
