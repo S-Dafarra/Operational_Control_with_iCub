@@ -86,7 +86,6 @@ void rollTest::run()
     int i=0;
     
     reader = head.read();
-    RTF_TEST_REPORT(Asserter::format("Retrieving head initial position: %s",reader->toString().c_str()));
     head_init = *reader;
     RTF_TEST_REPORT(Asserter::format("Retrieving head initial position: %s",head_init.toString().c_str()));
     
