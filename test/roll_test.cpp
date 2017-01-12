@@ -55,6 +55,10 @@ bool rollTest::setup(Property &property)
     RTF_ASSERT_ERROR_IF(yarp.connect("/icubSim/right_arm/state:o","/arm"),"Unable to connect to arm!");
     RTF_ASSERT_ERROR_IF(yarp.connect("/ball","/icubSim/world"),"Unable to connect to world!");
     
+    head.setStrict(false);
+    torso.setStrict(false);
+    arm.setStrict(false);
+    
     
     return true;
 }
@@ -73,19 +77,28 @@ void rollTest::tearDown()
 /***********************************************************************************/
 void rollTest::run()
 {
-    Bottle *head_init, *torso_init, *arm_init, ball_init;
+    Bottle *reader;
+    Bottle head_init, torso_init, arm_init, ball_init;
     Bottle cmd, respond;
     bool passed = false;
     double t0;
     double delta_ball;
     int i=0;
     
-    head_init = head.read();
-    RTF_TEST_REPORT(Asserter::format("Retrieving head initial position: %s",head_init->toString().c_str()));
-    torso_init = torso.read();
-    RTF_TEST_REPORT(Asserter::format("Retrieving torso initial position: %s",torso_init->toString().c_str()));
-    arm_init = arm.read();
-    RTF_TEST_REPORT(Asserter::format("Retrieving arm initial position: %s",arm_init->toString().c_str()));
+    reader = head.read();
+    RTF_TEST_REPORT(Asserter::format("Retrieving head initial position: %s",reader->toString().c_str()));
+    head_init = *reader;
+    RTF_TEST_REPORT(Asserter::format("Retrieving head initial position: %s",head_init.toString().c_str()));
+    
+    reader->clear();
+    reader = torso.read();
+    torso_init = *reader;
+    RTF_TEST_REPORT(Asserter::format("Retrieving torso initial position: %s",torso_init.toString().c_str()));
+    
+    reader->clear();
+    reader = arm.read();
+    arm_init = *reader;
+    RTF_TEST_REPORT(Asserter::format("Retrieving arm initial position: %s",arm_init.toString().c_str()));
     
     cmd.clear();
     respond.clear();
@@ -136,8 +149,9 @@ void rollTest::run()
     
     cmd.clear();
     cmd.addString(homeCMD);
+    respond.clear();
     RTF_TEST_REPORT(Asserter::format("Sending %s command",homeCMD.c_str()));
-    RTF_ASSERT_ERROR_IF(port.write(cmd),"Unable to communicate to module");
+    RTF_ASSERT_ERROR_IF(port.write(cmd,respond),"Unable to communicate to module");
     
     RTF_TEST_REPORT(Asserter::format("Waiting 3 seconds to let the robot go home"));
     Time::delay(3);
@@ -145,34 +159,54 @@ void rollTest::run()
     i=1;
     bool completed = false;
     int head_count=0,torso_count=0,arm_count=0;
+    Bottle *read_head, *read_torso, *read_arm;
     
-    while(i<6 && !completed){
+    passed=true;
+    completed = false;
+    head_count=0;
+    torso_count=0;
+    arm_count=0;
+
+
+    while((i<15) && (!completed)){
+        
+        read_head=head.read();
+        
+        //RTF_TEST_REPORT(Asserter::format("Reading head: %s",read_head->toString().c_str()));
+
+        read_torso=torso.read();
+        //RTF_TEST_REPORT(Asserter::format("Reading torso: %s",read_torso->toString().c_str()));
+
+        read_arm=arm.read();
+        //RTF_TEST_REPORT(Asserter::format("Reading arm: %s",read_arm->toString().c_str()));
         
         passed=true;
-        completed = false;
         head_count=0;
         torso_count=0;
         arm_count=0;
-        
+
         while (passed && !completed){
             completed = true;
-            if(head_count < head_init->size()){
-                passed = passed && (abs(head.read()->get(head_count).asDouble() - head_init->get(head_count).asDouble())<1);
+            if(head_count < head_init.size()){
+                passed = passed && (abs(read_head->get(head_count).asDouble() - head_init.get(head_count).asDouble()) < double(i));
+                RTF_TEST_REPORT(Asserter::format("Head %d check %d: %0.2f \n",head_count,passed,abs(read_head->get(head_count).asDouble() - head_init.get(head_count).asDouble())));
                 head_count++;
                 completed = false;
             }
-            if(torso_count < torso_init->size()){
-                passed = passed && (abs(torso.read()->get(torso_count).asDouble() - torso_init->get(torso_count).asDouble())<1);
+            if(torso_count < torso_init.size()){
+                passed = passed && (abs(read_torso->get(torso_count).asDouble() - torso_init.get(torso_count).asDouble()) < double(i));
+                RTF_TEST_REPORT(Asserter::format("Torso %d check %d: %0.2f \n",torso_count,passed,abs(read_torso->get(torso_count).asDouble() - torso_init.get(torso_count).asDouble())));
                 torso_count++;
                 completed = false;
             }
-            if(arm_count < min(arm_init->size(),7)){
-                passed = passed && (abs(arm.read()->get(arm_count).asDouble() - arm_init->get(arm_count).asDouble())<1);
+            if(arm_count < min(arm_init.size(),7)){
+                passed = passed && (abs(read_arm->get(arm_count).asDouble() - arm_init.get(arm_count).asDouble()) < double(i));
+                RTF_TEST_REPORT(Asserter::format("Arm %d check %d: %0.2f \n",arm_count,passed,abs(read_arm->get(arm_count).asDouble() - arm_init.get(arm_count).asDouble())));
                 arm_count++;
                 completed = false;
             }
         }
         RTF_TEST_CHECK(completed,Asserter::format("All joints back to home position with %d degree accuracy",i));
-        i++;
+        i+=2;
     }
 }
